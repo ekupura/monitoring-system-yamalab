@@ -1,0 +1,3 @@
+send-metrics:
+  build: ./send-metrics
+  container_name: send-metrics
