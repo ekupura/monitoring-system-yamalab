@@ -1,12 +1,8 @@
-FROM ubuntu:latest
+FROM nvidia/cuda:8.0-runtime
 RUN apt update
-RUN apt install -y cron python3 python3-pip
-RUN pip3 install influxdb psutil pynvml
-COPY simple-cron /etc/cron.d/simple-cron
-RUN chmod 0644 /etc/cron.d/simple-cron
-COPY ./send-metrics.py /
-COPY ./script.sh /
-RUN chmod +x /script.sh
-RUN chmod 0644 /etc/cron.d/simple-cron
-CMD cron && touch /etc/cron.d/simple-cron && tail -f /dev/null
+RUN apt install -y python3 python3-pip
+RUN pip3 install influxdb psutil
+COPY ./send.py /
+COPY ./nvidia.py /
+CMD python3 send.py
 
