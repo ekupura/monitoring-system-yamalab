@@ -29,6 +29,8 @@ def send():
     memory = psutil.virtual_memory().percent
     gpu_info = nvidia.getStatus()
     gpu_temp = float(re.match("\d*",gpu_info["GPU Current Temp"]).group())
+    gpu_memory = float(re.match("\d*",gpu_info["Memory"]).group())
+    gpu_gpu = float(re.match("\d*",gpu_info["Gpu"]).group())
     pro = 0 if gpu_info["Processes"] == 'None' else 1
 
     # define json_body
@@ -49,6 +51,8 @@ def send():
     for i,v in enumerate(cpus):
         json_body[0]["fields"]["CPU{}".format(i)] = v
     json_body[0]["fields"]["GPU Current Temp"] = gpu_temp
+    json_body[0]["fields"]["GPU Memory"] = gpu_memory
+    json_body[0]["fields"]["GPU"] = gpu_gpu
     json_body[0]["fields"]["Processes"] = pro
 
 
