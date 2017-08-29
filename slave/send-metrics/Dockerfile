@@ -1,7 +1,7 @@
 FROM ubuntu:latest
 RUN apt update
 RUN apt install -y cron python3 python3-pip
-RUN pip3 install influxdb psutil
+RUN pip3 install influxdb psutil pynvml
 COPY simple-cron /etc/cron.d/simple-cron
 RUN chmod 0644 /etc/cron.d/simple-cron
 COPY ./send-metrics.py /
