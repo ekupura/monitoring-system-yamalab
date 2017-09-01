@@ -54,9 +54,11 @@ def send():
     json_body[0]["fields"]["Processes"] = pro
 
     # send json_body to influxdb
-    print(json_body)
-    client.write_points(json_body)
-    print("OK!")
+    try:
+        client.write_points(json_body)
+        print("OK!")
+    except:
+        print("NG")
 
 
 send()
