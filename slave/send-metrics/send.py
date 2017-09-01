@@ -60,11 +60,10 @@ def send():
     client.write_points(json_body)
     print("OK!")
 
-    # set next schedule
+
+while True:
     sc.enter(30, 1, send)
     sc.run()
-
-send()
 
 
 
