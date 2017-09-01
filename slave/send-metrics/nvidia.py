@@ -1,28 +1,31 @@
-"""
-Parse output of nvidia-smi into a python dictionary.
-This is very basic!
-"""
 import subprocess
-import pprint
+import json
 
-def getStatus():
-    sp = subprocess.Popen(['nvidia-smi', '-q'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+DEFAULT_ATTRIBUTES_GPU = (
+    'utilization.gpu',
+    'utilization.memory',
+    'temperature.gpu'
+)
 
-    out_str = sp.communicate()
-    out_list = out_str[0].decode('utf-8').split('\n')
+DEFAULT_ATTRIBUTES_APPS = (
+    'process_name',
+)
 
-    out_dict = {}
-
-    for item in out_list:
+def stringToValue(dict):
+    for k in dict.keys():
         try:
-            key, val = item.split(':')
-            key, val = key.strip(), val.strip()
-            out_dict[key] = val
+            dict[k] = float(dict[k])
         except:
             pass
+    return dict
 
-    return out_dict
-
-if __name__ == '__main__':
-    print(getStatus())
-
+def getGpuInfo(nvidia_smi_path='nvidia-smi', keys=DEFAULT_ATTRIBUTES_GPU, apps =
+        DEFAULT_ATTRIBUTES_APPS, no_units=True):
+    nu_opt = '' if not no_units else ',nounits'
+    cmd = '%s --query-gpu=%s --format=csv,noheader%s' % (nvidia_smi_path, ','.join(keys), nu_opt)
+    output = subprocess.check_output(cmd, shell=True).decode('utf-8') + ', '
+    cmd = '%s --query-compute-apps=%s --format=csv%s' % (nvidia_smi_path, ','.join(apps), nu_opt)
+    output += subprocess.check_output(cmd, shell=True).decode('utf-8')
+    lines = output.replace('\n','').split(', ')
+    dict = {k: l for k, l in zip(keys + apps, lines)}
+    return stringToValue(dict)
