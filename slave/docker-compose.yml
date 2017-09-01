@@ -1,0 +1,20 @@
+version: '3'
+services:
+    send-metrics:
+      build: ./send-metrics
+      container_name: send-metrics
+      hostname: test
+      devices:
+          - /dev/nvidia0
+          - /dev/nvidiactl
+          - /dev/nvidia-uvm
+          - /dev/nvidia-uvm-tools
+      environment:
+          - EXAMPLE_ENV_VARIABLE=example
+      volumes:
+          - nvidia_driver_375.66:/usr/local/nvidia:ro
+
+volumes:
+  media: null
+  nvidia_driver_375.66:
+    external: true
